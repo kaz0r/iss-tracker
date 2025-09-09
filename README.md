@@ -1,3 +1,3 @@
-## JStack
+## ISS Tracker
 
-Ship high-performance Next.js apps for extremely cheap
+Simple application to track the current ISS location.

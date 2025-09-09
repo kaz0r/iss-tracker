@@ -4,8 +4,8 @@ import { Providers } from "./components/providers"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "JStack App",
-  description: "Created using JStack",
+  title: "ISS Tracker",
+  description: "Track the ISS current live position",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 }
 
