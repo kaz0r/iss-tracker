@@ -2,7 +2,12 @@
 
 import { client } from "@/lib/client"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Map } from "./map"
+import dynamic from "next/dynamic"
+
+const Map = dynamic(() => import("./map").then((mod) => ({ default: mod.Map })), {
+    ssr: false,
+    loading: () => <div>Loading map...</div>
+})
 
 export const IssMap = () => {
     const queryClient = useQueryClient()
