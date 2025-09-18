@@ -17,10 +17,26 @@ export const IssMap = () => {
         queryFn: async () => {
             const res = await client.issData.getPosition.$get()
 
-            return await res.json()
+            const json = await res.json()
+
+            return json
         },
         refetchInterval: () => {
             return 5000
+        }
+    })
+
+    const { data: pathData, isPending: isLoadingPath } = useQuery({
+        queryKey: ["get-iss-path"],
+        queryFn: async () => {
+            const res = await client.issData.getPath.$get()
+
+            const json = await res.json()
+
+            return json
+        },
+        refetchInterval: () => {
+            return 10000
         }
     })
 
@@ -33,6 +49,10 @@ export const IssMap = () => {
     const issPosition = issObject.iss_position
 
     return (<>
-        <Map latitude={issPosition.latitude} longitude={issPosition.longitude} />
+        <Map
+            latitude={issPosition.latitude}
+            longitude={issPosition.longitude}
+            pathData={pathData || []}
+        />
     </>)
 }

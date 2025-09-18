@@ -1,5 +1,5 @@
 "use client"
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet'
+import { MapContainer, Marker, Popup, TileLayer, Polyline } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -15,16 +15,56 @@ if (typeof window !== 'undefined') {
 
 interface MapMarkerPositionProps {
     latitude: number,
-    longitude: number
+    longitude: number,
+    pathData: Array<{
+        latitude: number,
+        longitude: number,
+        timestamp: number
+    }>
 }
 
-export const Map = ({ latitude, longitude }: MapMarkerPositionProps) => {
+export const Map = ({ latitude, longitude, pathData }: MapMarkerPositionProps) => {
     const issIcon = L.icon({
         iconUrl: "/iss.svg",
         iconSize: [32, 32],
         iconAnchor: [32, 32],
         popupAnchor: [0, -32],
     })
+
+    // Split path into segments to handle longitude wrap-around
+    const splitPathIntoSegments = (path: Array<{ latitude: number, longitude: number, timestamp: number }>) => {
+        if (path.length < 2) return []
+
+        const segments: Array<Array<{ latitude: number, longitude: number, timestamp: number }>> = []
+        let currentSegment = [path[0]!]
+
+        for (let i = 1; i < path.length; i++) {
+            const prev = path[i - 1]!
+            const current = path[i]!
+
+            // Check for longitude jump > 180 degrees (crossing date line)
+            const lonDiff = Math.abs(current.longitude - prev.longitude)
+
+            if (lonDiff > 180) {
+                // End current segment and start new one
+                if (currentSegment.length > 1) {
+                    segments.push(currentSegment)
+                }
+                currentSegment = [current]
+            } else {
+                currentSegment.push(current)
+            }
+        }
+
+        // Add the last segment if it has more than one point
+        if (currentSegment.length > 1) {
+            segments.push(currentSegment)
+        }
+
+        return segments
+    }
+
+    const pathSegments = splitPathIntoSegments(pathData)
 
     return (
         <div className="relative w-full h-screen overflow-hidden">
@@ -47,9 +87,22 @@ export const Map = ({ latitude, longitude }: MapMarkerPositionProps) => {
                     minZoom={2}
                     maxZoom={18}
                 />
+                {/* ISS Path as orange line segments */}
+                {pathSegments.map((segment, index) => (
+                    <Polyline
+                        key={index}
+                        positions={segment.map(pos => [pos.latitude, pos.longitude])}
+                        pathOptions={{
+                            color: '#ff6600',
+                            weight: 3,
+                            opacity: 0.8
+                        }}
+                    />
+                ))}
+
                 <Marker position={[latitude, longitude]} icon={issIcon}>
                     <Popup>
-                        <p>Iss current position <br /> {`Latitude: ${latitude}`} <br /> {`Longitude: ${longitude}`}</p>
+                        <p>ISS current position <br /> {`Latitude: ${latitude}`} <br /> {`Longitude: ${longitude}`}</p>
                     </Popup>
                 </Marker>
             </MapContainer>
