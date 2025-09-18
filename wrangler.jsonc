@@ -1,15 +1,17 @@
 {
-    "name": "jstack-app",
-    "main": "src/server/index.ts",
-    "compatibility_date": "2025-02-14",
-    "observability": {
-      "enabled": true
-    },
-    "placement": {
-      "mode": "smart"
-    },
-    "dev": {
-      "port": 8080
-    }
+  "name": "iss-tracker-api",
+  "main": "src/server/index.ts",
+  "compatibility_date": "2025-02-14",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "placement": {
+    "mode": "smart"
+  },
+  "dev": {
+    "port": 8080
   }
-  
+}

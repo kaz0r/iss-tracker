@@ -46,12 +46,10 @@ export const IssMap = () => {
     if (!issObject)
         return (<div>error</div>)
 
-    const issPosition = issObject.iss_position
-
     return (<>
         <Map
-            latitude={issPosition.latitude}
-            longitude={issPosition.longitude}
+            latitude={parseFloat(issObject.latitude)}
+            longitude={parseFloat(issObject.longitude)}
             pathData={pathData || []}
         />
     </>)
